@@ -1,15 +1,47 @@
 <?php
+/**
+ * Now that you can think clearly, you move deeper into the labyrinth of hallways and office furniture that makes up
+ * this part of Easter Bunny HQ. This must be a graphic design department; the walls are covered in specifications
+ * for triangles.
+ *
+ * Or are they?
+ *
+ * The design document gives the side lengths of each triangle it describes, but... 5 10 25? Some of these aren't
+ * triangles. You can't help but mark the impossible ones.
+ *
+ * In a valid triangle, the sum of any two sides must be larger than the remaining side.
+ * For example, the "triangle" given above is impossible, because 5 + 10 is not larger than 25.
+ *
+ * In your puzzle input, how many of the listed triangles are possible?
+ */
 
-function check_triangle($side1, $side2, $side3)
+$data_file = fopen(__DIR__ . '/data.txt', 'rb');
+$valid     = 0;
+foreach (triangle_from($data_file) as $triangle) {
+    $valid += is_triangle_valid($triangle) ? 1 : 0;
+}
+echo 'There are ' . $valid . ' valid Triangles' . "\n";
+
+fclose($data_file);
+
+/**
+ * @param $triangle
+ *
+ * @return bool
+ */
+function is_triangle_valid($triangle)
 {
-    $result1 = ($side1 + $side2) > $side3;
-    $result2 = ($side2 + $side3) > $side1;
-    $result3 = ($side1 + $side3) > $side2;
+    sort($triangle);
 
-    return ($result1 && $result2 && $result3);
+    return $triangle[0] + $triangle[1] > $triangle[2];
 }
 
-function get_triangle($data_file)
+/**
+ * @param $data_file
+ *
+ * @return Generator
+ */
+function triangle_from($data_file)
 {
     while ($line = fgets($data_file)) {
         yield array_map(
@@ -23,11 +55,3 @@ function get_triangle($data_file)
     }
 }
 
-$data_file = fopen(__DIR__ . '/data.txt', 'rb');
-$valid   = 0;
-foreach (get_triangle($data_file) as $triangle) {
-    $valid += check_triangle(...$triangle) ? 1 : 0;
-}
-echo 'There are ' . $valid . ' Triangles' . "\n";
-
-fclose($data_file);
