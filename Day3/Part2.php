@@ -24,9 +24,9 @@ while ($line = fgets($data_file)) {
     $triangles[2][] = $items[2];
 
     if (count($triangles[0]) === 3) {
-        $valid += check_triangle(...$triangles[0]) ? 1 : -1;
-        $valid += check_triangle(...$triangles[1]) ? 1 : -1;
-        $valid += check_triangle(...$triangles[2]) ? 1 : -1;
+        $valid += check_triangle(...$triangles[0]) ? 1 : 0;
+        $valid += check_triangle(...$triangles[1]) ? 1 : 0;
+        $valid += check_triangle(...$triangles[2]) ? 1 : 0;
         $triangles = [[], [], [],];
     }
 
