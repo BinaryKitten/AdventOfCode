@@ -42,3 +42,4 @@ while ($line = fgets($data_file)) {
     echo $grid[$position[0]][$position[1]];
 }
 echo "\n";
+fclose($data_file);
