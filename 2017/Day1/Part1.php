@@ -47,8 +47,6 @@ for ($i = 0, $l = strlen($data) - 1; $i < $l; $i++) {
 }
 $numbers[] = substr($data, -1);
 
-var_dump($numbers);
-
 echo 'Result: ' . array_sum($numbers) . "\n\n";
 
 // Your puzzle answer was 1097.
