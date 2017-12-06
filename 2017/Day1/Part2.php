@@ -33,3 +33,5 @@ for ($i = 0, $l = strlen($data) - $steps; $i < $l; $i++) {
     }
 }
 echo 'Result: ' . array_sum($numbers) . "\n\n";
+
+// Your puzzle answer was 1188.
