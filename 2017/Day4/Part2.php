@@ -24,12 +24,32 @@ $data = array_filter($data);
 
 $valid_passphrases = 0;
 foreach ($data as $row) {
-    $words = explode(' ', $row);
-    sort($words);
-    $valid_passphrases += (int)(count($words) === count(array_unique($words)));
+
+    // sort all the words' letters alphabetically
+    $words = array_map(
+        function ($word) {
+            $return = str_split($word);
+            sort($return);
+
+            return implode('', $return);
+        },
+        explode(' ', $row)
+    );
+
+    // step through removing the 1st item from the array each time
+    // then see if that item still appears in the array
+    // if so skip to the next passphrase
+    while($this_word = array_shift($words)) {
+        if (in_array($this_word, $words, true)) {
+            continue 2;
+        }
+    }
+
+    // if we've not skipped, increment count
+    $valid_passphrases++;
 }
 
 echo 'How many passphrases are valid?' . "\n";
 echo 'Answer: ' . $valid_passphrases . "\n";
 
-//Your puzzle answer was 477.
+//Your puzzle answer was 167.
