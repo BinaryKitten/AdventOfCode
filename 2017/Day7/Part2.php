@@ -82,6 +82,11 @@ function parse_tree(&$data)
     }
 }
 
+function get_root($data)
+{
+    return key($data);
+}
+
 function get_weights($data)
 {
     foreach ($data as $key => $value) {
@@ -114,7 +119,10 @@ gyxo (61)
 cntj (57)');
 
 parse_tree($demo_data);
-$demo_weights = get_weights($demo_data);
+$root = get_root($demo_data);
+
+
+$demo_weights = get_weights($demo_data[$root]['children']);
 var_dump($demo_weights);
 
 
