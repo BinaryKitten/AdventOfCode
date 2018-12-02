@@ -55,13 +55,13 @@ foreach ($tests as $test) {
     );
 }
 
-function generate_result(array $data)
+function generate_result(array $data, $debug = false)
 {
     $frequencies = [0];
     $frequency = 0;
     while (true) {
         foreach ($data as $step => $adjustment) {
-            printf(
+            $debug && printf(
                 '%d: %d + %d = %d' . "\n",
                 $step,
                 $frequency,
