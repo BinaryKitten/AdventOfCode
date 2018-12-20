@@ -52,15 +52,14 @@
  */
 
 /**
- * @param $claims
+ * @param array $claims
  * @return array
  */
-function create_grid($claims): array
+function parse_claims(array $claims): array
 {
     $regex = '/#(?P<index>\d{1,}) @ (?P<grid_x>\d+),(?P<grid_y>\d+): (?P<width>\d+)x(?P<height>\d+)/';
-    $grid = [];
 
-    $parsed_claims = array_filter(
+    return array_filter(
         array_map(function ($instruction) use ($regex) {
             if (preg_match($regex, $instruction, $data) !== false) {
                 return $data;
@@ -68,6 +67,15 @@ function create_grid($claims): array
             return false;
         }, $claims)
     );
+}
+
+/**
+ * @param array $parsed_claims
+ * @return array
+ */
+function create_grid(array $parsed_claims): array
+{
+    $grid = [];
 
     foreach ($parsed_claims as $claim) {
         for ($x = 0; $x < $claim['width']; $x++) {
@@ -105,12 +113,14 @@ $test = [
     'result' => 4
 ];
 
-$grid = create_grid($test['claims']);
-$result = get_overlapping_inches($grid);
-echo 'Test Result = ' . $result . ' Inches Overlapping.' . "\n";
+$test_parsed_claims = parse_claims($test['claims']);
+$test_grid = create_grid($test_parsed_claims);
+$test_result = get_overlapping_inches($test_grid);
+echo 'Test Result = ' . $test_result . ' Inches Overlapping.' . "\n";
 
-$input_data = array_filter(file(__DIR__ . '/input.txt'));
-$input_grid = create_grid($input_data);
+$input_claims = array_filter(file(__DIR__ . '/input.txt'));
+$input_parsed_claims = parse_claims($input_claims);
+$input_grid = create_grid($input_parsed_claims);
 $input_result = get_overlapping_inches($input_grid);
 echo 'Input Result = ' . $input_result . ' Inches Overlapping.' . "\n";
 
