@@ -113,3 +113,6 @@ $input_data = array_filter(file(__DIR__ . '/input.txt'));
 $input_grid = create_grid($input_data);
 $input_result = get_overlapping_inches($input_grid);
 echo 'Input Result = ' . $input_result . ' Inches Overlapping.' . "\n";
+
+
+// Your puzzle answer was 115242.
