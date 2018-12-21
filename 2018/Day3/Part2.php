@@ -94,3 +94,5 @@ $input_parsed_claims = parse_claims($input_claims);
 $input_overlap = get_overlapping_claims($input_parsed_claims);
 $input_result = get_first_non_overlapping($input_parsed_claims, $input_overlap);
 echo 'Input Result: Index - ' . $input_result . ' is the 1st that does not overlap.' . "\n";
+
+// Your puzzle answer was 1046.
