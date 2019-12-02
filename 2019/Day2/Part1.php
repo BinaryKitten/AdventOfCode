@@ -69,20 +69,144 @@
  * To do this, before running the program, replace position 1 with the value 12 and replace position 2 with the value 2.
  *
  * What value is left at position 0 after the program halts?
+ *
+ * @param int $number
+ *
+ * @return string
  */
+function ordinal(int $number): string
+{
+    $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
+    if ((($number % 100) >= 11) && (($number % 100) <= 13)) {
+        return $number . 'th';
+    } else {
+        return $number . $ends[$number % 10];
+    }
+}
 
-$fileName = 'example.txt';
-$input = array_map(
-    'intval',
-    explode(
-        ',',
-        rtrim(
-            file_get_contents(
-                $fileName
+/**
+ * @param string $fileName
+ */
+function intCodeCompute(string $fileName): void
+{
+    $data = array_map(
+        'intval',
+        explode(
+            ',',
+            rtrim(
+                file_get_contents(
+                    $fileName
+                )
             )
         )
-    )
-);
+    );
 
-$opcodes = array_chunk($input,4);
-var_dump($opcodes);
+    $opCount = 0;
+//    for ($pos = 0, $end = count($data); $pos <= $end; $pos += 4) {
+//        if ($data[$pos] === 99) {
+//            break;
+//        }
+//        $opCount++;
+//    }
+//    printf('End found %2$s Opcode (Loc: %1$d)' . "\n", $pos, ordinal($opCount +1));
+
+    for ($opCodePos = 0, $end = count($data); $opCodePos <= $end; $opCodePos += 4) {
+        if ($data[$opCodePos] === 99) {
+            printf('End found %2$s Opcode (Loc: %1$d)' . "\n", $opCodePos, ordinal($opCount +1));
+            break;
+        }
+
+        $opCode = $data[$opCodePos];
+        $inputValLoc1 = $data[$opCodePos + 1];
+        $inputValLoc2 = $data[$opCodePos + 2];
+        $outputLocation = $data[$opCodePos + 3];
+
+        printf(
+            '%s Opcode (Loc: %d): %d',
+            ordinal($opCount +1),
+            $opCodePos,
+            $opCode
+        );
+
+        $inputVal1 = $data[$inputValLoc1];
+        $inputVal2 = $data[$inputValLoc2];
+
+        $result = $opCode === 1 ? $inputVal1 + $inputVal2 : $inputVal1 * $inputVal2;
+        $method = $opCode === 1 ? 'addition': 'multiplication';
+
+        printf(
+            ' - %s of %d (Loc: %d) & %d (Loc: %d): %d (set Loc: %d)' . "\n",
+            $method,
+            $inputVal1,
+            $inputValLoc1,
+            $inputVal2,
+            $inputValLoc2,
+            $result,
+            $outputLocation
+        );
+
+        $data[$outputLocation] = $result;
+
+        $opCount++;
+    }
+
+    return;
+
+    $outputFile = fopen('out_' . $fileName, 'w');
+    fputcsv($outputFile, $data);
+
+    $pos = 0;
+    $opcode = $data[$pos];
+    while ($opcode !== 99) {
+        $inputValLoc1 = $data[$pos + 1];
+        $inputValLoc2 = $data[$pos + 2];
+        $inputVal1 = $data[$inputValLoc1];
+        $inputVal2 = $data[$inputValLoc2];
+        $outputLocation = $data[$pos + 3];
+        switch ($opcode) {
+            case 1:
+                $result = $inputVal1 + $inputVal2;
+                $method = 'addition';
+
+                break;
+            case 2:
+                $result = $inputVal1 * $inputVal2;
+                $method = 'multiplication';
+                break;
+        }
+
+        printf(
+            '%d (Loc: %d) - %s of %d (Loc: %d) & %d (Loc: %d)' . "\n",
+            $result,
+            $outputLocation,
+            $method,
+            $inputVal1,
+            $inputValLoc1,
+            $inputVal2,
+            $inputValLoc2
+        );
+
+        $data[$outputLocation] = $result;
+
+        fputcsv($outputFile, $data);
+
+        $pos += 4;
+        $opcode = $data[$pos];
+    }
+
+    fclose($outputFile);
+    printf('Result from dataset %s is: %d' . "\n", $fileName, $data[0]);
+}
+
+//intCodeCompute('data/example.txt');
+//echo str_repeat('-', 30) . "\n";
+//intCodeCompute('data/example2.txt');
+//echo str_repeat('-', 30) . "\n";
+//intCodeCompute('data/example3.txt');
+//echo str_repeat('-', 30) . "\n";
+//intCodeCompute('data/example4.txt');
+//echo str_repeat('-', 30) . "\n";
+//intCodeCompute('data/example5.txt');
+//echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/input.txt');
+echo str_repeat('-', 30) . "\n";
