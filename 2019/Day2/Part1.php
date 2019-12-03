@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-/**
+/*
  * --- Day 2: 1202 Program Alarm ---
  *
  * On the way to your gravity assist around the Moon, your ship computer beeps angrily about a
@@ -70,101 +70,20 @@
  *
  * What value is left at position 0 after the program halts?
  *
- * @param int $number
- *
- * @return string
  */
-function ordinal(int $number): string
-{
-    $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
-    if ((($number % 100) >= 11) && (($number % 100) <= 13)) {
-        return $number . 'th';
-    } else {
-        return $number . $ends[$number % 10];
-    }
-}
+require_once 'functions.php';
 
-/**
- * @param string $fileName
- * @param array $setup
- */
-function intCodeCompute(string $fileName, array $setup = []): void
-{
-    $data = array_map(
-        'intval',
-        explode(
-            ',',
-            rtrim(
-                file_get_contents(
-                    $fileName
-                )
-            )
-        )
-    );
-
-    if (!empty($setup)) {
-        foreach ($setup as $location => $value) {
-            $data[$location] = (int)$value;
-        }
-    }
-
-    $opCount = 0;
-    for ($opCodePos = 0, $end = count($data); $opCodePos <= $end; $opCodePos += 4) {
-        if ($data[$opCodePos] === 99) {
-            printf('End found %2$s Opcode (Loc: %1$d)' . "\n", $opCodePos, ordinal($opCount + 1));
-            break;
-        }
-
-        $opCode = $data[$opCodePos];
-        $inputValLoc1 = $data[$opCodePos + 1];
-        $inputValLoc2 = $data[$opCodePos + 2];
-        $outputLocation = $data[$opCodePos + 3];
-
-        printf(
-            '%s Opcode (Loc: %d): %d',
-            ordinal($opCount + 1),
-            $opCodePos,
-            $opCode
-        );
-
-        $inputVal1 = $data[$inputValLoc1];
-        $inputVal2 = $data[$inputValLoc2];
-
-        $result = $opCode === 1 ? $inputVal1 + $inputVal2 : $inputVal1 * $inputVal2;
-        $method = $opCode === 1 ? 'addition' : 'multiplication';
-
-        printf(
-            ' - %s of %d (Loc: %d) & %d (Loc: %d): %d (set Loc: %d)' . "\n",
-            $method,
-            $inputVal1,
-            $inputValLoc1,
-            $inputVal2,
-            $inputValLoc2,
-            $result,
-            $outputLocation
-        );
-
-        $data[$outputLocation] = $result;
-
-        $opCount++;
-    }
-
-    printf('Result from dataset %s is: %d' . "\n", $fileName, $data[0]);
-
-    return;
-}
-
-intCodeCompute('data/example.txt');
-echo str_repeat('-', 30) . "\n";
-intCodeCompute('data/example2.txt');
-echo str_repeat('-', 30) . "\n";
-intCodeCompute('data/example3.txt');
-echo str_repeat('-', 30) . "\n";
-intCodeCompute('data/example4.txt');
-echo str_repeat('-', 30) . "\n";
-intCodeCompute('data/example5.txt');
-echo str_repeat('-', 30) . "\n";
-intCodeCompute('data/input.txt', [1 => 12, 2 => 2]);
-echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/example.txt', [], true);
+line();
+intCodeCompute('data/example2.txt', [], true);
+line();
+intCodeCompute('data/example3.txt', [], true);
+line();
+intCodeCompute('data/example4.txt', [], true);
+line();
+intCodeCompute('data/example5.txt', [], true);
+line();
+intCodeCompute('data/input.txt', [1 => 12, 2 => 2], true);
+line();
 
 // Your puzzle answer was 4690667.
