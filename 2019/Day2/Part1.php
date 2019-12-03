@@ -86,8 +86,9 @@ function ordinal(int $number): string
 
 /**
  * @param string $fileName
+ * @param array $setup
  */
-function intCodeCompute(string $fileName): void
+function intCodeCompute(string $fileName, array $setup = []): void
 {
     $data = array_map(
         'intval',
@@ -101,18 +102,16 @@ function intCodeCompute(string $fileName): void
         )
     );
 
-    $opCount = 0;
-//    for ($pos = 0, $end = count($data); $pos <= $end; $pos += 4) {
-//        if ($data[$pos] === 99) {
-//            break;
-//        }
-//        $opCount++;
-//    }
-//    printf('End found %2$s Opcode (Loc: %1$d)' . "\n", $pos, ordinal($opCount +1));
+    if (!empty($setup)) {
+        foreach ($setup as $location => $value) {
+            $data[$location] = (int)$value;
+        }
+    }
 
+    $opCount = 0;
     for ($opCodePos = 0, $end = count($data); $opCodePos <= $end; $opCodePos += 4) {
         if ($data[$opCodePos] === 99) {
-            printf('End found %2$s Opcode (Loc: %1$d)' . "\n", $opCodePos, ordinal($opCount +1));
+            printf('End found %2$s Opcode (Loc: %1$d)' . "\n", $opCodePos, ordinal($opCount + 1));
             break;
         }
 
@@ -123,7 +122,7 @@ function intCodeCompute(string $fileName): void
 
         printf(
             '%s Opcode (Loc: %d): %d',
-            ordinal($opCount +1),
+            ordinal($opCount + 1),
             $opCodePos,
             $opCode
         );
@@ -132,7 +131,7 @@ function intCodeCompute(string $fileName): void
         $inputVal2 = $data[$inputValLoc2];
 
         $result = $opCode === 1 ? $inputVal1 + $inputVal2 : $inputVal1 * $inputVal2;
-        $method = $opCode === 1 ? 'addition': 'multiplication';
+        $method = $opCode === 1 ? 'addition' : 'multiplication';
 
         printf(
             ' - %s of %d (Loc: %d) & %d (Loc: %d): %d (set Loc: %d)' . "\n",
@@ -150,63 +149,22 @@ function intCodeCompute(string $fileName): void
         $opCount++;
     }
 
-    return;
-
-    $outputFile = fopen('out_' . $fileName, 'w');
-    fputcsv($outputFile, $data);
-
-    $pos = 0;
-    $opcode = $data[$pos];
-    while ($opcode !== 99) {
-        $inputValLoc1 = $data[$pos + 1];
-        $inputValLoc2 = $data[$pos + 2];
-        $inputVal1 = $data[$inputValLoc1];
-        $inputVal2 = $data[$inputValLoc2];
-        $outputLocation = $data[$pos + 3];
-        switch ($opcode) {
-            case 1:
-                $result = $inputVal1 + $inputVal2;
-                $method = 'addition';
-
-                break;
-            case 2:
-                $result = $inputVal1 * $inputVal2;
-                $method = 'multiplication';
-                break;
-        }
-
-        printf(
-            '%d (Loc: %d) - %s of %d (Loc: %d) & %d (Loc: %d)' . "\n",
-            $result,
-            $outputLocation,
-            $method,
-            $inputVal1,
-            $inputValLoc1,
-            $inputVal2,
-            $inputValLoc2
-        );
-
-        $data[$outputLocation] = $result;
-
-        fputcsv($outputFile, $data);
-
-        $pos += 4;
-        $opcode = $data[$pos];
-    }
-
-    fclose($outputFile);
     printf('Result from dataset %s is: %d' . "\n", $fileName, $data[0]);
+
+    return;
 }
 
-//intCodeCompute('data/example.txt');
-//echo str_repeat('-', 30) . "\n";
-//intCodeCompute('data/example2.txt');
-//echo str_repeat('-', 30) . "\n";
-//intCodeCompute('data/example3.txt');
-//echo str_repeat('-', 30) . "\n";
-//intCodeCompute('data/example4.txt');
-//echo str_repeat('-', 30) . "\n";
-//intCodeCompute('data/example5.txt');
-//echo str_repeat('-', 30) . "\n";
-intCodeCompute('data/input.txt');
+intCodeCompute('data/example.txt');
 echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/example2.txt');
+echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/example3.txt');
+echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/example4.txt');
+echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/example5.txt');
+echo str_repeat('-', 30) . "\n";
+intCodeCompute('data/input.txt', [1 => 12, 2 => 2]);
+echo str_repeat('-', 30) . "\n";
+
+// Your puzzle answer was 4690667.
