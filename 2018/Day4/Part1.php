@@ -69,3 +69,85 @@
  * What is the ID of the guard you chose multiplied by the minute you chose?
  * (In the above example, the answer would be 10 * 24 = 240.)
  */
+
+$test = [
+    '[1518-11-01 00:00] Guard #10 begins shift',
+    '[1518-11-01 00:05] falls asleep',
+    '[1518-11-01 00:25] wakes up',
+    '[1518-11-01 00:30] falls asleep',
+    '[1518-11-01 00:55] wakes up',
+    '[1518-11-01 23:58] Guard #99 begins shift',
+    '[1518-11-02 00:40] falls asleep',
+    '[1518-11-02 00:50] wakes up',
+    '[1518-11-03 00:05] Guard #10 begins shift',
+    '[1518-11-03 00:24] falls asleep',
+    '[1518-11-03 00:29] wakes up',
+    '[1518-11-04 00:02] Guard #99 begins shift',
+    '[1518-11-04 00:36] falls asleep',
+    '[1518-11-04 00:46] wakes up',
+    '[1518-11-05 00:03] Guard #99 begins shift',
+    '[1518-11-05 00:45] falls asleep',
+    '[1518-11-05 00:55] wakes up',
+];
+
+function parse_log($log_entries)
+{
+    $sorted = $log_entries;
+    sort($sorted);
+
+    $log = [];
+
+    foreach ($sorted as $log_entry) {
+        $log_entry = trim($log_entry);
+        [$event_datetime, $action] = explode('] ', substr(trim($log_entry), 1));
+        $event_datetime = new DateTimeImmutable($event_datetime);
+        $event_date = $event_datetime->format('Y-m-d');
+        if (!array_key_exists($event_date, $log)) {
+            $log[$event_date] = [
+                'guard' => null,
+                'sleeping' => []
+            ];
+        }
+
+        if (stripos($action, ' begins shift') !== false) {
+            $log[$event_date]['guard'] = (int)preg_replace('/\D+/', '', $action);
+        } elseif ($action === 'falls asleep') {
+            $log[$event_date]['sleeping'][] = ['start' => $event_datetime, 'finish' => null];
+
+        } elseif ($action === 'wakes up') {
+            end($log[$event_date]['sleeping']);
+            $key = key($log[$event_date]['sleeping']);
+            $log[$event_date]['sleeping'][$key]['finish'] = $event_datetime;
+        }
+    }
+
+    return $log;
+}
+
+function get_unique_guard_sleeping_logs(array $log) {
+
+    $guard_log = [];
+
+    var_dump($log);
+    foreach ($log as $log_entry) {
+
+        $log_entry['sleeping_duration'] = array_reduce(
+            $log_entry['sleeping'],
+            function ($minutes, $sleep_entry) {
+                ['start' => $start, 'finish' => $finish] = $sleep_entry;
+                if ($start instanceof DateTimeImmutable && $finish instanceof DateTimeImmutable) {
+                    $minutes += $finish->diff($start)->i;
+                }
+
+                return $minutes;
+            },
+            0
+        );
+    }
+
+    $guard_sleeping = array_column($log,'sleeping_duration', 'guard');
+    var_dump($guard_sleeping);
+}
+
+$log_entries = parse_log($test);
+get_unique_guard_sleeping_logs($log_entries);
