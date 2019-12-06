@@ -61,3 +61,90 @@
  *
  * What is the total number of direct and indirect orbits in your map data?
  */
+$data = file('input.txt');
+//$data = file('example.txt');
+$input = array_map(
+    function ($item)
+    {
+        return array_combine(
+            ['parent', 'child'],
+            explode(
+                ')',
+                trim($item)
+            )
+        );
+    },
+    $data
+);
+ini_set('xdebug.max_nesting_level', (string)count($input));
+
+
+$tree = [];
+$parents = array_column($input, 'parent');
+$children = array_column($input, 'child');
+$thisLevelParents = array_unique(array_diff($parents, $children));
+
+while (count($thisLevelParents) != 0) {
+    foreach ($thisLevelParents as $levelParent) {
+        $levelChildren = [];
+        foreach ($input as $idx => $item) {
+            if ($item['parent'] === $levelParent) {
+                unset($input[$idx]);
+                $levelChildren[] = $item['child'];
+            }
+        }
+        $tree[$levelParent] = implode(',', $levelChildren);
+    }
+    $thisLevelParents = array_unique(
+        array_diff(
+            array_column($input, 'parent'),
+            array_column($input, 'child')
+        )
+    );
+}
+
+function get_children($children_value, &$data)
+{
+    if (!empty($children_value) && !is_array($children_value)) {
+        $children = array_fill_keys(
+            array_map(
+                'trim',
+                explode(',', $children_value)
+            ),
+            []
+        );
+        foreach ($children as $child => $value) {
+            if (!array_key_exists($child, $data)) {
+                continue;
+            }
+            $children[$child] = get_children($data[$child], $data);
+            unset($data[$child]);
+        }
+        $children_value = $children;
+    }
+
+    return $children_value;
+}
+
+function count_paths(array $tree): int
+{
+    $arrayIterator = new \RecursiveArrayIterator($tree);
+    $iterator = new \RecursiveIteratorIterator($arrayIterator, RecursiveIteratorIterator::CHILD_FIRST);
+    $depths = 0;
+    foreach ($iterator as $item) {
+        if ($iterator->getDepth() <= 1) {
+            continue;
+        }
+        $depths += $iterator->getDepth();
+    }
+
+    return $depths + 1;
+}
+
+foreach ($tree as $key => $children_value) {
+    $tree[$key] = get_children($children_value, $tree);
+}
+
+printf('Total Orbits: %d' . "\n", count_paths($tree));
+
+// Your puzzle answer was 158090.
