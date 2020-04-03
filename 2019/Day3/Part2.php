@@ -36,9 +36,9 @@
  */
 $file = fopen('input.txt', 'r');
 $wireNum = 0;
-$routes = [0 => [], 1 => []];
+$routes = [0 => ['0,0'], 1 => ['0,0']];
 while ($wire = fgetcsv($file)) {
-    $x = $y = $stepCount = 0;
+    $x = $y = 0 ;
 
     foreach ($wire as $move) {
         $direction = strtoupper($move[0]);
@@ -62,21 +62,23 @@ while ($wire = fgetcsv($file)) {
         for ($step = 0; $step < $blocks; $step++) {
             $x += $x_mod;
             $y += $y_mod;
-            $key = sprintf('%d,%d', $x, $y);
-            if (!array_key_exists($key, $routes[$wireNum])) {
-                $routes[$wireNum][$key] = ++$stepCount;
-            }
+            $routes[$wireNum][] = sprintf('%d,%d', $x, $y);
         }
     }
     $wireNum++;
 }
 fclose($file);
 
-$intersections = array_intersect_key(...$routes);
-foreach($intersections as $key => $v) {
-    $result = $routes[0][$key] + $routes[1][$key];
-    printf('%s, %d + %d = %d'. "\n", $key, $routes[0][$key], $routes[1][$key], $result);
-}
+$intersections = array_intersect(...$routes);
+$routeIntersections = [
+    array_intersect($routes[0], $intersections),
+    array_intersect($routes[1], $intersections),
+];
+var_dump($routeIntersections);
+//foreach($intersections as $key => $v) {
+//    $result = $routes[0][$key] + $routes[1][$key];
+//    printf('%s, %d + %d = %d'. "\n", $key, $routes[0][$key], $routes[1][$key], $result);
+//}
 //$mappedStepCounts = array_map(
 //    function ($step) use ($inverted_routes)
 //    {
