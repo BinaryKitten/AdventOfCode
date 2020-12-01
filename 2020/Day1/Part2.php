@@ -34,3 +34,5 @@ foreach ($input as $firstIndex => $number) {
 }
 
 echo 'Result: ' . $result . "\n\n";
+
+// Your puzzle answer was 155806250.
