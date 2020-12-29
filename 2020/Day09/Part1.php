@@ -66,31 +66,15 @@ declare(strict_types=1);
  *
  * What is the first number that does not have this property?
  */
+require_once __DIR__ . '/functions.php';
 
-$numbers = array_map('intval', file(__DIR__ . '/input.txt'));
+$testNumbers = getNumbers(__DIR__ . '/test.txt');
+$numbers = getNumbers(__DIR__ . '/input.txt');
 
-/**
- * @param int[] $numbers
- * @param int $curIndex
- * @return int[]
- */
-function getSums(array $numbers, int $curIndex): array
-{
-    $sums = [];
-    for ($stepIndex = $curIndex - 25, $end = $curIndex - 1; $stepIndex <= $end; $stepIndex++) {
-        for ($otherStep = $stepIndex; $otherStep <= $end; $otherStep++) {
-            $sums[] = $numbers[$stepIndex] + $numbers[$otherStep];
-        }
-    }
-    return $sums;
-}
+[$testInvalidIndex, $testInvalidNumber] = findInvalidNumber($testNumbers, preamble: 5);
+[$invalidIndex, $invalidNumber] = findInvalidNumber($numbers, preamble: 25);
 
-$currentNumber = -1;
-for ($index = 25, $last = array_key_last($numbers); $index <= $last; $index++) {
-    $currentNumber = $numbers[$index];
-    if (!in_array($currentNumber, getSums($numbers, $index), true)) {
-        break;
-    }
-}
+echo 'TEST: 1st failed number: ' . $testInvalidNumber . "\n";
+echo '1st failed number: ' . $invalidNumber . "\n\n";
 
-echo '1st failed number: ' . $currentNumber . "\n\n";
+// Your puzzle answer was 248131121.

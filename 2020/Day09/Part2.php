@@ -39,3 +39,32 @@ declare(strict_types=1);
  *
  * What is the encryption weakness in your XMAS-encrypted list of numbers?
  */
+require_once __DIR__ . '/functions.php';
+
+function findEncryptionWeakness(array $numbers, int $invalidIndex, int $invalidNumber, int $preamble): int
+{
+    $checksum = 0;
+    $index = $invalidIndex - $preamble;
+    $end = $index + 1;
+
+    $slice = array_slice($numbers, $index, $end);
+
+    $checksum += $numbers[$index];
+
+    return $invalidNumber;
+}
+
+$testNumbers = getNumbers(__DIR__ . '/test.txt');
+$numbers = getNumbers(__DIR__ . '/input.txt');
+
+[$testInvalidIndex, $testInvalidNumber] = findInvalidNumber($testNumbers, preamble: 5);
+[$invalidIndex, $invalidNumber] = findInvalidNumber($numbers, preamble: 25);
+var_dump($testInvalidIndex, $testNumbers[$testInvalidIndex]);
+
+$testEncryptionWeakness = findEncryptionWeakness($testNumbers, $testInvalidIndex, $testInvalidNumber, preamble: 5);
+$encryptionWeakness = findEncryptionWeakness($numbers, $invalidIndex, $invalidNumber, preamble: 25);
+
+
+echo 'TEST: Encryption Weakness: ' . $testEncryptionWeakness . "\n";
+echo 'Encryption Weakness: ' . $encryptionWeakness . "\n\n";
+
