@@ -30,10 +30,12 @@ declare(strict_types=1);
  *
  * For example:
  *
+ * ```
  * 1abc2
  * pqr3stu8vwx
  * a1b2c3d4e5f
  * treb7uchet
+ * ```
  *
  * In this example, the calibration values of these four lines are 12, 38, 15, and 77.
  * Adding these together produces 142.
@@ -43,7 +45,6 @@ declare(strict_types=1);
 
 function calculationCalibrationSum(string $fileName): int
 {
-
     $lines = array_map(trim(...), file(__DIR__.'/'.$fileName));
     $numbers = [];
     foreach ($lines as $line) {
@@ -62,7 +63,7 @@ function calculationCalibrationSum(string $fileName): int
     return array_sum($numbers);
 }
 
-echo 'Example Result: ' . calculationCalibrationSum('example.txt') . "\n";
-echo 'Result: ' . calculationCalibrationSum('input.txt') . "\n\n";
+echo 'Example Result: '.calculationCalibrationSum('example.txt')."\n";
+echo 'Result: '.calculationCalibrationSum('input.txt')."\n\n";
 
 // Your puzzle answer was 54597.
