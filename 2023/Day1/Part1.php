@@ -48,17 +48,11 @@ function calculationCalibrationSum(string $fileName): int
     $lines = array_map(trim(...), file(__DIR__.'/'.$fileName));
     $numbers = [];
     foreach ($lines as $line) {
-        $lineNumbers = [];
-        for ($i = 0, $l = strlen($line); $i < $l; $i++) {
-            $char = $line[$i];
-            if (is_numeric($char)) {
-                $lineNumbers[] = (int) $char;
-            }
-        }
-        if (count($lineNumbers) < 2) {
-            $lineNumbers[] = $lineNumbers[0];
-        }
-        $numbers[] = $lineNumbers[0].$lineNumbers[array_key_last($lineNumbers)];
+        preg_match_all('/\d/', $line, $matches);
+        $first = current($matches[0]);
+        $last = end($matches[0]);
+
+        $numbers[] = $first.$last;
     }
     return array_sum($numbers);
 }
