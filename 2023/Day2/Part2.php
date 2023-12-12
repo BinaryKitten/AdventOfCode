@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../helpers.php';
+
 /**
  * --- Part Two ---
  *
@@ -38,16 +40,6 @@ declare(strict_types=1);
  * For each game, find the minimum set of cubes that must have been present.
  * What is the sum of the power of these sets?
  */
-function dump(...$data): void
-{
-    array_walk($data, fn(mixed $item) => var_dump($item));
-}
-
-function dd(...$data): void
-{
-    dump(...$data);
-    die();
-}
 
 function calculateGamePower(string $game): int
 {
@@ -92,3 +84,5 @@ function gamePowerSum(string $fileName): int
 
 echo 'Example Result: '.gamePowerSum('example.txt')."\n";
 echo 'Result: '.gamePowerSum('input.txt')."\n\n";
+
+// Your puzzle answer was 2683.

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../helpers.php';
+
 /**
  * --- Day 2: Cube Conundrum ---
  *
@@ -49,16 +51,6 @@ declare(strict_types=1);
  * Determine which games would have been possible if the bag had been loaded with only 12 red cubes, 13 green cubes,
  * and 14 blue cubes. What is the sum of the IDs of those games?
  */
-function dump(...$data): void
-{
-    array_walk($data, fn(mixed $item) => var_dump($item));
-}
-
-function dd(...$data): void
-{
-    dump(...$data);
-    die();
-}
 
 
 function isGameValid(string $game): bool
@@ -100,3 +92,5 @@ function validGameIdSum(string $fileName): int
 
 echo 'Example Result: '.validGameIdSum('example.txt')."\n";
 echo 'Result: '.validGameIdSum('input.txt')."\n\n";
+
+// Your puzzle answer was 2683.
